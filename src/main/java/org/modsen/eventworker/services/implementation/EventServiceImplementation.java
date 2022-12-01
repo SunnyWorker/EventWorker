@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class EventServiceImplementation implements EventService {
 
-    private EventDAO eventDAO;
+    private final EventDAO eventDAO;
 
     @Autowired
     public EventServiceImplementation(EventDAO eventDAO) {

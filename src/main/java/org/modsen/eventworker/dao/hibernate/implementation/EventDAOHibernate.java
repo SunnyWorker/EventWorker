@@ -1,10 +1,7 @@
 package org.modsen.eventworker.dao.hibernate.implementation;
 
 import jakarta.persistence.criteria.*;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.modsen.eventworker.dao.hibernate.EventDAO;
 import org.modsen.eventworker.dao.pojo.Event;
 import org.modsen.eventworker.services.sorting.SortingParameter;
@@ -18,8 +15,12 @@ import java.util.Optional;
 
 @Repository
 public class EventDAOHibernate implements EventDAO {
+
+    private final SessionFactory sessionFactory;
     @Autowired
-    private SessionFactory sessionFactory;
+    public EventDAOHibernate(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Optional<Event> findEventById(long id) {
@@ -102,6 +103,7 @@ public class EventDAOHibernate implements EventDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            event = session.merge(event);
             session.persist(event);
             tx.commit();
         } catch (HibernateException e) {
@@ -118,6 +120,7 @@ public class EventDAOHibernate implements EventDAO {
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            event = session.merge(event);
             session.remove(event);
             tx.commit();
         } catch (HibernateException e) {
